@@ -45,6 +45,7 @@ public class PlayerController : MonoBehaviour {
         if (Input.GetMouseButton(0)) {
             reduceRope();
         }
+
 #endif       
 #if UNITY_ANDROID ||UNITY_IPHONE
         if (Input.touchCount > 0&& Input.GetTouch(0).phase == TouchPhase.Moved)
@@ -87,8 +88,13 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void makeRope(){
-		DistanceJoint2D joint = gameObject.AddComponent<DistanceJoint2D> ();
-		joint.connectedBody = targetNode.GetComponent<Rigidbody2D> ();
+        if (targetNode != null && targetNode.GetComponent<NodeController>().hasConnected == false) {
+            DistanceJoint2D joint = gameObject.AddComponent<DistanceJoint2D>();
+            joint.connectedBody = targetNode.GetComponent<Rigidbody2D>();
+            targetNode.GetComponent<NodeController>().hasConnected = true;      //每个点只能连一次
+        }
+
+
         //resetVelocity(speed);
 	}
     //void OnTriggerEnter2D(Collider2D col){
@@ -103,6 +109,15 @@ public class PlayerController : MonoBehaviour {
         Debug.DrawLine(pos1, pos2, Color.red, 0.1f);
         if (hitNumber>0) {
             targetNode = ray[0].transform.gameObject;
+        }
+    }
+
+    void OnCollisionEnter2D(Collision2D col)
+    {
+        if (col.gameObject.name == "terrain")
+        {
+            Debug.Log("lose");
+            Application.LoadLevel("scene1");
         }
     }
 }
