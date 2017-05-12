@@ -12,6 +12,7 @@ public class DrawTool : MonoBehaviour
             lr = t.gameObject.AddComponent<LineRenderer>();
         }
         lr.SetWidth(0.1f, 0.1f);
+        lr.SetColors(Color.red, Color.yellow);
         return lr;
     }
 

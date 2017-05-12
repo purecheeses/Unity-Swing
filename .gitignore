@@ -2,6 +2,7 @@
 
 /Game/obj
 
+/Game/Temp
 /Game/Assembly-CSharp.csproj
 /Game/Game.sln
 /Game/Game.userprefs
