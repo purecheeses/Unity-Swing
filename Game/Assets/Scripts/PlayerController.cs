@@ -37,22 +37,26 @@ public class PlayerController : MonoBehaviour {
 
 	void ClickEvent()
     {
-#if UNITY_STANDALONE_WIN ||UNITY_STANDALONE_OSX
+//#if UNITY_STANDALONE_WIN ||UNITY_STANDALONE_OSX
         if (Input.GetMouseButtonDown(0))
         {
-            operation();
+            //operation();
+            makeRope();
         }
         if (Input.GetMouseButton(0)) {
             reduceRope();
         }
-
-#endif       
-#if UNITY_ANDROID ||UNITY_IPHONE
-        if (Input.touchCount > 0&& Input.GetTouch(0).phase == TouchPhase.Moved)
+        if (Input.GetMouseButtonDown(0))
         {
-            operation();
+            releaseRope();
         }
-#endif
+//#endif       
+//#if UNITY_ANDROID ||UNITY_IPHONE
+//        if (Input.touchCount > 0&& Input.GetTouch(0).phase == TouchPhase.Moved)
+//        {
+//            operation();
+//        }
+//#endif
     }
 
     void reduceRope() {
