@@ -102,12 +102,14 @@ public class DrawTool : MonoBehaviour
     }
 
 
-    public static GameObject go;
-    public static MeshFilter mf;
-    public static MeshRenderer mr;
-    public static Shader shader;
-    private static GameObject CreateMesh(List<Vector3> vertices)
+
+	private static GameObject CreateMesh(List<Vector3> vertices,Transform t)
     {
+
+		GameObject go;
+		MeshFilter mf; 
+		MeshRenderer mr;
+		Shader shader;
         int[] triangles;
         Mesh mesh = new Mesh();
 
@@ -123,15 +125,19 @@ public class DrawTool : MonoBehaviour
             triangles[3 * i + 2] = i + 2;
         }
 
-        if (go == null)
-        {
-            go = new GameObject("mesh");
-            go.transform.position = new Vector3(0, 0.1f, 0);//让绘制的图形上升一点，防止被地面遮挡  
-            mf = go.AddComponent<MeshFilter>();
-            mr = go.AddComponent<MeshRenderer>();
-            shader = Shader.Find("Unlit/Color");
-        }
-
+		if (t.FindChild("mesh") == null || t.FindChild("mesh").gameObject == null) {
+			go = new GameObject ("mesh");
+			go.transform.position = new Vector3 (0, 0,0.1f);//让绘制的图形上升一点，防止被地面遮挡  
+			mf = go.AddComponent<MeshFilter> ();
+			mr = go.AddComponent<MeshRenderer> ();
+			shader = Shader.Find ("Unlit/Color");
+			go.transform.parent = t;
+		} else {
+			go = t.FindChild ("mesh").gameObject;
+			mf = go.GetComponent<MeshFilter> ();
+			mr = go.GetComponent<MeshRenderer> ();
+			shader = mr.material.shader;
+		}
         mesh.vertices = vertices.ToArray();
         mesh.triangles = triangles;
 
@@ -147,18 +153,18 @@ public class DrawTool : MonoBehaviour
     {
         int pointAmount = 100;//点的数目，值越大曲线越平滑    
         float eachAngle = angle / pointAmount;
-        Vector3 forward = t.forward;
+        Vector3 forward = t.right;
 
         List<Vector3> vertices = new List<Vector3>();
         vertices.Add(center);
 
         for (int i = 1; i < pointAmount - 1; i++)
         {
-            Vector3 pos = Quaternion.Euler(0f, -angle / 2 + eachAngle * (i - 1), 0f) * forward * radius + center;
+			Vector3 pos = Quaternion.Euler(0f, 0f,-angle / 2 + eachAngle * (i - 1)) * forward * radius + center;
             vertices.Add(pos);
         }
 
-        CreateMesh(vertices);
+        CreateMesh(vertices,t);
     }
 
     //绘制实心圆    
@@ -166,17 +172,17 @@ public class DrawTool : MonoBehaviour
     {
         int pointAmount = 100;//点的数目，值越大曲线越平滑    
         float eachAngle = 360f / pointAmount;
-        Vector3 forward = t.forward;
+        Vector3 forward = t.right;
 
         List<Vector3> vertices = new List<Vector3>();
 
         for (int i = 0; i <= pointAmount; i++)
         {
-            Vector3 pos = Quaternion.Euler(0f, eachAngle * i, 0f) * forward * radius + center;
+			Vector3 pos = Quaternion.Euler(0f,  0f,-eachAngle * i) * forward * radius + center;
             vertices.Add(pos);
         }
 
-        CreateMesh(vertices);
+        CreateMesh(vertices,t);
     }
 
     //绘制实心长方形  
@@ -190,7 +196,7 @@ public class DrawTool : MonoBehaviour
         vertices.Add(bottomMiddle + t.right * (width / 2) + t.forward * length);
         vertices.Add(bottomMiddle + t.right * (width / 2));
 
-        CreateMesh(vertices);
+        CreateMesh(vertices,t);
     }
 
     //绘制实心长方形2D  
@@ -217,7 +223,7 @@ public class DrawTool : MonoBehaviour
             vertices.Add(forwardMiddle + new Vector3(0, -width / 2));
         }
 
-        CreateMesh(vertices);
+        CreateMesh(vertices,t);
     }
 
 }

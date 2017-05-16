@@ -8,12 +8,14 @@ public class NodeController : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         hasConnected = false;
-        //circleRadius = GetComponent<CircleCollider2D>().radius * transform.localScale.x;
+//        circleRadius = GetComponent<CircleCollider2D>().radius * transform.localScale.x;
+		circleRadius = 10f;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        //DrawTool.DrawCircle(transform, transform.localPosition, circleRadius); 
+        DrawTool.DrawCircle(transform, transform.localPosition, circleRadius); 
+		DrawTool.DrawCircleSolid(transform, transform.position, circleRadius); 
 	}
         
 }
