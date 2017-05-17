@@ -14,7 +14,7 @@ public class ConnectedBar : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         Vector3 pos = (button1.transform.position + button2.transform.position) / 2;
-        transform.position = new Vector3(pos.x, pos.y, 0);
+        transform.position = new Vector3(pos.x, pos.y, -1);
         float length = (button1.transform.position - button2.transform.position).magnitude;
         Vector3 scale = transform.localScale;
         transform.localScale = new Vector3(scale.x,length/beginLength, scale.z);

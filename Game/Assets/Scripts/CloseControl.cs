@@ -3,52 +3,71 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class CloseControl : MonoBehaviour {
-	float maxDist;
+	float minDist;
 	float minAngle;
 	float time;
 	float deltaDist;
 	float deltaAngle;
+	float currentDist;
+	float currentAngle;
 	public GameObject button2;
 	public GameObject button1;
 	public GameObject head;
+	bool isClosing ;
 	// Use this for initialization
 	void Start () {
-		maxDist = 10f;
-		minAngle = 0;
-		time  = 4f;
-		deltaDist = (maxDist - button2.GetComponent<DistanceJoint2D> ().distance) / time/60f;
-		deltaAngle = (button2.GetComponent<SliderJoint2D> ().angle - minAngle) / time/60f;
-		button2.GetComponent<DistanceJoint2D>().autoConfigureDistance = false;
-		button2.GetComponent<SliderJoint2D> ().autoConfigureAngle = false;
-		GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
+		init ();
 	}
 
-	// Update is called once per frame
-	void Update () {
-		//        open();
+	void init(){
+		isClosing = false;
+		minAngle = 90;
+		minDist = 2;
+		time  = 2f;
+		float beginDist = Vector2.Distance (button1.transform.position, button2.transform.position);
+		Debug.Log (beginDist);
+		currentDist = beginDist;
+		currentAngle = 180;
+		deltaDist = ( beginDist - minDist) / time/60f;
+		deltaAngle = (180f - minAngle) / time/60f;
+		isClosing = false;
 	}
-
+		
 	void FixedUpdate(){
-		close ();
+		if (isClosing) {
+			close ();
+		}
 	}
 
 	void close() {
-		float distance = button2.GetComponent<DistanceJoint2D>().distance;
-		float angle = button2.GetComponent<SliderJoint2D> ().angle;
-		if (distance +deltaDist <= maxDist) {
-			button2.GetComponent<DistanceJoint2D> ().distance += deltaDist;
+		if (currentAngle - deltaAngle > minAngle) {
+			currentAngle -= deltaAngle;
 		} else {
-			button2.GetComponent<DistanceJoint2D> ().enabled = false;
-			if (button2.GetComponent<FixedJoint2D> () == null) {
-				button2.AddComponent<FixedJoint2D> ();
-				button2.GetComponent<FixedJoint2D> ().connectedBody = button1.GetComponent<Rigidbody2D> ();
-			}
+			currentAngle = minAngle;
+			onCloseDone ();
 		}
-		if (angle - deltaAngle >= minAngle) {
-			button2.GetComponent<SliderJoint2D> ().angle -= deltaAngle;
-			head.transform.rotation = Quaternion.Euler (0, 0, 0);
+		if (currentDist - deltaDist > minDist) {
+			currentDist -= deltaDist;
 		} else {
-			button2.GetComponent<SliderJoint2D> ().enabled = false;
+			currentDist = minDist;
+			onCloseDone ();
 		}
+
+		head.transform.position = transform.position + Quaternion.AngleAxis (currentAngle, Vector3.forward) * Vector3.right * currentDist;
+	}
+
+	public void onCloseBegin(){
+		init ();
+		isClosing = true;
+		head.GetComponent<Rigidbody2D> ().bodyType = RigidbodyType2D.Static;
+		GetComponent<Rigidbody2D> ().bodyType = RigidbodyType2D.Static;
+		head.GetComponent<Animator> ().Play ("headClose");
+		GetComponent<Animator>().Play ("tailClose");
+	}
+
+	void onCloseDone(){
+		isClosing = false;
+		head.GetComponent<Rigidbody2D> ().bodyType = RigidbodyType2D.Dynamic;
+		GetComponent<Rigidbody2D> ().bodyType = RigidbodyType2D.Dynamic;
 	}
 }
