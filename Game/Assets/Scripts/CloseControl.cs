@@ -2,22 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class OpenControl : MonoBehaviour {
-    float maxDist;
+public class CloseControl : MonoBehaviour {
+	float maxDist;
 	float minAngle;
 	float time;
 	float deltaDist;
 	float deltaAngle;
-    public GameObject button2;
+	public GameObject button2;
 	public GameObject button1;
 	public GameObject head;
-	bool openning;
 	// Use this for initialization
 	void Start () {
-		init ();
-	}
-
-	void init(){
 		maxDist = 10f;
 		minAngle = 0;
 		time  = 4f;
@@ -25,18 +20,20 @@ public class OpenControl : MonoBehaviour {
 		deltaAngle = (button2.GetComponent<SliderJoint2D> ().angle - minAngle) / time/60f;
 		button2.GetComponent<DistanceJoint2D>().autoConfigureDistance = false;
 		button2.GetComponent<SliderJoint2D> ().autoConfigureAngle = false;
-		GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;	
-		openning = false;
+		GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
+	}
+
+	// Update is called once per frame
+	void Update () {
+		//        open();
 	}
 
 	void FixedUpdate(){
-		if (openning) {
-			open ();
-		}
+		close ();
 	}
 
-    void open() {
-        float distance = button2.GetComponent<DistanceJoint2D>().distance;
+	void close() {
+		float distance = button2.GetComponent<DistanceJoint2D>().distance;
 		float angle = button2.GetComponent<SliderJoint2D> ().angle;
 		if (distance +deltaDist <= maxDist) {
 			button2.GetComponent<DistanceJoint2D> ().distance += deltaDist;
@@ -53,5 +50,5 @@ public class OpenControl : MonoBehaviour {
 		} else {
 			button2.GetComponent<SliderJoint2D> ().enabled = false;
 		}
-    }
+	}
 }
